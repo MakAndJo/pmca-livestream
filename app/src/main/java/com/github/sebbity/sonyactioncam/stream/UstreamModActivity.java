@@ -66,8 +66,8 @@ public class UstreamModActivity extends Activity {
 
         try {
 
-            Wifi wifi = new Wifi(this);
-            wifi.connectToWiFi();
+           Wifi wifi = new Wifi(this);
+           wifi.connectToWiFi();
             this.Log("WL", "Init..");
 
         } catch(Error e) {
