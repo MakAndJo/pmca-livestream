@@ -11,6 +11,7 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 
+import com.github.sebbity.sonyactioncam.stream.Logger;
 import com.github.sebbity.sonyactioncam.stream.UstreamModActivity;
 import com.sony.imaging.app.livestreaming.shooting.WiFiStatusChangeReceiver;
 
@@ -28,7 +29,8 @@ public class Wifi {
     private UstreamModActivity activity;
 
     private void Log(String tag, String msg) {
-        activity.Log(tag, msg);
+        // activity.Log(tag, msg);
+        Logger.info(String.format("%s: %s", tag, msg));
     }
 
     public class CallbackWifi implements WiFiStatusChangeReceiver.Callback {

@@ -33,6 +33,7 @@ public class UstreamModActivity extends Activity {
 
     public void Log(String tag, String msg) {
         listAdapter.add(String.format("%s: %s", tag, msg));
+        Logger.info(String.format("%s: %s", tag, msg));
     }
 
     @Override
@@ -61,12 +62,13 @@ public class UstreamModActivity extends Activity {
         listAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
         listView.setAdapter(listAdapter);
 
-        listAdapter.add("UstreamModActivity");
+        listAdapter.add("TJMC Stream");
 
         try {
 
             Wifi wifi = new Wifi(this);
             wifi.connectToWiFi();
+            this.Log("WL", "Init..");
 
         } catch(Error e) {
             listAdapter.add("EXCEPTION:");
@@ -75,7 +77,8 @@ public class UstreamModActivity extends Activity {
     }
 
     public void onWifiConnected() {
-        enableAdb();
+        this.Log("WL", "Success!");
+        // enableAdb();
         startEncoding();
     }
 

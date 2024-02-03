@@ -4,17 +4,14 @@ android {
     compileSdk 16
 
     defaultConfig {
-        applicationId "com.github.sebbity.sonyactioncam.stream"
-        manifestPlaceholders = [activityName: "MainActivity"]
+        applicationId "com.sony.imaging.app.livestreaming"
+        manifestPlaceholders = [activityName: "LiveStreaming"]
 
         minSdkVersion 16
         targetSdkVersion 16
 
         versionCode "git -C ${projectDir} rev-list --first-parent --count HEAD".execute().text.trim().toInteger()
         versionName "git -C ${projectDir} describe --always --tags --dirty".execute().text.trim()
-
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        multiDexEnabled true
     }
 
 //    compileOptions {

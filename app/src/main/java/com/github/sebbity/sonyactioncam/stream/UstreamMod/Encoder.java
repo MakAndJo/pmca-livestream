@@ -8,6 +8,7 @@ import android.provider.MediaStore;
 import android.text.format.Formatter;
 import android.util.Log;
 
+import com.github.sebbity.sonyactioncam.stream.Logger;
 import com.github.sebbity.sonyactioncam.stream.UstreamModActivity;
 
 import com.sony.imaging.lib.ustream.StreamBuffer;
@@ -73,24 +74,35 @@ public class Encoder {
 
     public void start() {
         // Set parameters for a local recording MediaRecorder?
-        setParams();
+        // setParams();
+        activity.Log("Enc", "init..");
+        try {
+            SetupMediaRecorder2();
+            MediaRecorder.StreamBuffer buffer = createStreamBuffer();
 
-        Log.d(TAG, "new StreamBuffer");
-        SetupMediaRecorder2();
+        } catch (Exception e) {
+            Logger.error(String.format("%s: %s", "EncoderError", e.getMessage()));
+        }
+        // Log.d(TAG, "new StreamBuffer");
+        // if (buffer) {
+            //     mMediaRecorder2.setStreamBuffer(buffer);
+            //     mMediaRecorder2.prepare();
+            // }
+            activity.Log("Enc", "set up..");
 
-        mMediaRecorder2.setStreamBuffer(createStreamBuffer());
-        mMediaRecorder2.prepare();
 
-        SetupUstream();
 
-        // Set parameters for the stream recording MediaRecorder?
-        setParams2();
 
-        activity.Log("Enc", "All set up!");
+        // SetupUstream();
 
-        mMediaRecorder2.start();
+        // // Set parameters for the stream recording MediaRecorder?
+        // setParams2();
 
-        this.us.start();
+        // activity.Log("Enc", "All set up!");
+
+        // mMediaRecorder2.start();
+
+        // this.us.start();
     }
 
     private void SetupMediaRecorder2() {
@@ -266,26 +278,31 @@ public class Encoder {
     }
 
     public MediaRecorder.StreamBuffer createStreamBuffer() {
-        this.mBuffer = new StreamBuffer(((ScalarProperties.getInt("mem.rawimage.size.in.mega.pixel") * 1024) * 1024) * 2);
-        this.mBuffer.StatusAreaMCodecSize = 2048;
-        this.mBuffer.StatusAreaScalarSize = 2048;
-        this.mBuffer.VideoInfoSize = 1048576;
-        this.mBuffer.AudioInfoSize = 131072;
-        this.mBuffer.VideoESBufferSize = 16777216;
-        this.mBuffer.AudioESBufferSize = 4194304;
-        this.mBuffer.calculate();
+        try {
+            this.mBuffer = new StreamBuffer(((ScalarProperties.getInt("mem.rawimage.size.in.mega.pixel") * 1024) * 1024) * 2);
+            this.mBuffer.StatusAreaMCodecSize = 2048;
+            this.mBuffer.StatusAreaScalarSize = 2048;
+            this.mBuffer.VideoInfoSize = 1048576;
+            this.mBuffer.AudioInfoSize = 131072;
+            this.mBuffer.VideoESBufferSize = 16777216;
+            this.mBuffer.AudioESBufferSize = 4194304;
+            this.mBuffer.calculate();
 
-        this.streamBuffer = new MediaRecorder.StreamBuffer();
+            this.streamBuffer = new MediaRecorder.StreamBuffer();
 
-        this.dBuffer = this.mBuffer.getBuffer();
+            this.dBuffer = this.mBuffer.getBuffer();
 
-        this.streamBuffer.readStatusArea = new MediaRecorder.StreamBuffer.StreamMemoryArea(this.dBuffer, this.mBuffer.StatusAreaScalarOffset, this.mBuffer.StatusAreaScalarSize);
-        this.streamBuffer.writeStatusArea = new MediaRecorder.StreamBuffer.StreamMemoryArea(this.dBuffer, this.mBuffer.StatusAreaMCodecOffset, this.mBuffer.StatusAreaMCodecSize);
-        this.streamBuffer.videoInfo = new MediaRecorder.StreamBuffer.StreamMemoryArea(this.dBuffer, this.mBuffer.VideoInfoOffset, this.mBuffer.VideoInfoSize);
-        this.streamBuffer.videoES = new MediaRecorder.StreamBuffer.StreamMemoryArea(this.dBuffer, this.mBuffer.VideoESBufferOffset, this.mBuffer.VideoESBufferSize);
-        this.streamBuffer.audioInfo = new MediaRecorder.StreamBuffer.StreamMemoryArea(this.dBuffer, this.mBuffer.AudioInfoOffset, this.mBuffer.AudioInfoSize);
-        this.streamBuffer.audioES = new MediaRecorder.StreamBuffer.StreamMemoryArea(this.dBuffer, this.mBuffer.AudioESBufferOffset, this.mBuffer.AudioESBufferSize);
+            this.streamBuffer.readStatusArea = new MediaRecorder.StreamBuffer.StreamMemoryArea(this.dBuffer, this.mBuffer.StatusAreaScalarOffset, this.mBuffer.StatusAreaScalarSize);
+            this.streamBuffer.writeStatusArea = new MediaRecorder.StreamBuffer.StreamMemoryArea(this.dBuffer, this.mBuffer.StatusAreaMCodecOffset, this.mBuffer.StatusAreaMCodecSize);
+            this.streamBuffer.videoInfo = new MediaRecorder.StreamBuffer.StreamMemoryArea(this.dBuffer, this.mBuffer.VideoInfoOffset, this.mBuffer.VideoInfoSize);
+            this.streamBuffer.videoES = new MediaRecorder.StreamBuffer.StreamMemoryArea(this.dBuffer, this.mBuffer.VideoESBufferOffset, this.mBuffer.VideoESBufferSize);
+            this.streamBuffer.audioInfo = new MediaRecorder.StreamBuffer.StreamMemoryArea(this.dBuffer, this.mBuffer.AudioInfoOffset, this.mBuffer.AudioInfoSize);
+            this.streamBuffer.audioES = new MediaRecorder.StreamBuffer.StreamMemoryArea(this.dBuffer, this.mBuffer.AudioESBufferOffset, this.mBuffer.AudioESBufferSize);
+        } catch (Exception e) {
+            Logger.info(String.format("%s: %s", "EncoderError", e.getMessage()));
+        } finally {
+            return this.streamBuffer;
+        }
 
-        return this.streamBuffer;
     }
 }
